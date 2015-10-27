@@ -1,3 +1,4 @@
+# coding: UTF-8
 from django.conf import settings
 from django.http import HttpResponse, Http404, JsonResponse, HttpResponseBadRequest
 from django.shortcuts import render
@@ -8,10 +9,15 @@ from filebrowser import decorators
 from settings import sources
 
 def test_hello(request):
-#    return HttpResponse("hello world")
+    '''
+    测试uploader模块
+    '''
     return render(request, 'filebrowser/index.html')
 
 def dirToJson( inFs, path = '/', recursive = False):
+    '''
+    将一个指定文件夹目录树返回,json格式数据
+    '''
     data = []
     for item in inFs.listdir(path = path ):
         fPath =  os.path.join(path, item )
@@ -34,11 +40,12 @@ def dirToJson( inFs, path = '/', recursive = False):
         data.append( row )
     return JsonResponse(data,safe=False)
 
-def example( request ):
-    d = { }
-    return utils.renderWithContext(request, 'example.html', d )
 
-def splitPath( inPath ):
+def splitPath(inPath):
+    '''
+    将参数传递的数据进行分割，path格式为 "key/subpath",其中key对应的是字典sources的key,
+    value包括文件系统类型以及对应类型的pyfilesystem的参数,详见settings.py
+    '''
     if not inPath:
         return None, None
     if inPath[0] == '/':
@@ -46,6 +53,7 @@ def splitPath( inPath ):
     root = inPath.split('/')[0]
     path = '/'.join(inPath.split('/')[1:])
     return root, path
+
 
 def getFsFromKey( key ):
     if key in sources.keys():
@@ -144,15 +152,17 @@ def download( inFilePath, inFileObj, attachment = False ):
 @decorators.ajax_request
 @csrf_exempt
 def upload(request):
-    path = request.META.get('HTTP_X_FILE_NAME')
-    print path
 
     file_list = []
 
+    #设置文件类型限制
     #allowed_extensions = 'jpg,jpeg,gif,png,pdf,swf,doc,docx,xls,\
     #log,xlsx,ppt,pptx,txt,c,py,cpp,go,class,java'.split(',')
     
-    if path and request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
+    #使用xmlhttpRequest进行请求
+    if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
+        path = request.META.get('HTTP_X_FILE_NAME')
+        if not path: return HttpResponseBadRequest("400 bad request")
         root, path = splitPath( path.decode('UTF-8') )
         cur_fs = getFsFromKey( root )
         if not cur_fs: raise Http404
@@ -168,9 +178,10 @@ def upload(request):
         f.close()
         file_list.append(path)
 
+    #使用一般的post请求
     else:
-        root, path = splitPath( request.POST['path'].decode('UTF-8') )
-        cur_fs = getFsFromKey( root )
+        root, path = splitPath(request.POST['path'].decode('UTF-8'))
+        cur_fs = getFsFromKey(root)
         if not cur_fs: raise Http404
         for key in request.FILES.keys():
             upload = request.FILES[key]
