@@ -6,13 +6,13 @@ rest_api: 应用的状态信息
 filebrowser:访问主机文件系统
 
 ### api类型:
-1. 请求一个文件夹下的目录树
-  --方法: POST
-  --url: /fs/filebrowser/api/
-  --参数: 
+1. 请求一个文件夹下的目录树  
+  --方法: POST  
+  --url: /fs/filebrowser/api/  
+  --参数:   
 	* cmd="get" 
     * path="key/path" (key 为配置文件中主机提供的文件系统的根目录,目前只有localfolder可选,path为请求的路径)
-  --返回值: json格式数据
+  --返回值: json格式数据  
 
 2. 新建目录
   --方法: POST
