@@ -5,7 +5,7 @@ rest_api: 应用的状态信息
 
 filebrowser:访问主机文件系统
 
-###api类型:
+### api类型:
 1. 请求一个文件夹下的目录树
   --方法: POST
   --url: /fs/filebrowser/api/
