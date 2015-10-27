@@ -19,6 +19,8 @@ def dirToJson( inFs, path = '/', recursive = False):
     将一个指定文件夹目录树返回,json格式数据
     '''
     data = []
+    if not inFs.exists(path) or not inFs.isdir(path):
+        return data
     for item in inFs.listdir(path = path ):
         fPath =  os.path.join(path, item )
         infos = inFs.getinfo( fPath )
@@ -37,8 +39,8 @@ def dirToJson( inFs, path = '/', recursive = False):
         if not isLeaf and recursive:
             row['items'] = dirToJson(inFs, path = fPath, recursive = recursive )
 
-        data.append( row )
-    return JsonResponse(data,safe=False)
+        data.append(row)
+    return data
 
 
 def splitPath(inPath):
@@ -70,13 +72,11 @@ def api( request ):
     if not cmd: raise Http404
 
     # todo: remove these special cases
-    if cmd == 'delete':
-        root, path = splitPath( request.POST['file'] )
-    elif cmd in ['view', 'download']:
+    if cmd in ['view', 'download']:
         root, path = splitPath( request.GET['file'] )
     elif cmd == 'rename':
         root, path = splitPath( request.POST['oldname'] )
-    elif cmd in ['newdir', 'get']:
+    elif cmd in ['newdir', 'get', 'delete']:
         root, path = splitPath( request.POST['path'] )
     else:
         return HttpResponseBadRequest("400 bad request")
@@ -88,12 +88,13 @@ def api( request ):
         return HttpResponseBadRequest("400 bad request")
 
     if cmd == 'get':
-        return dirToJson(cur_fs, path, recursive = False)
+        data = dirToJson(cur_fs, path, recursive = False)
+        return JsonResponse(data, safe=False)
 
     elif cmd == 'newdir':
         if cur_fs.exists(path):
             return HttpResponseBadRequest("directory already exists")
-        cur_fs.makedir(path)
+        cur_fs.makedir(path, recursive=True)
         return JsonResponse({'success':True})
 
     elif cmd == 'rename':
@@ -103,8 +104,10 @@ def api( request ):
             return HttpResponseBadRequest("400 bad request")
         if root == root2:
             # same FS
-            if not cur_fs.exists(path): raise Http404
-            cur_fs.rename(path, path2)
+            try:
+                cur_fs.rename(path, path2)
+            except:
+                return HttpResponseBadRequest("400 bad request")
         else:
             # different FS
             cur_fs2 = getFsFromKey(root2)
@@ -125,26 +128,29 @@ def api( request ):
 
     elif cmd == 'view':
         # todo redir to APACHE or OTHER
-        if not cur_fs.exists(path): raise Http404
-        file = cur_fs.open(path, 'rb')
-        return download( path, file)
+        return download(cur_fs,path)
 
     elif cmd == 'download':
         # todo redir to APACHE or OTHER
-        if not cur_fs.exists(path): raise Http404
-        file = cur_fs.open(path,'rb' )
-        return download( path, file, attachment = True)
+        return download(cur_fs,path,attachment = True)
 
-    return {'success':False, 'msg':'Erreur'}
+    return {'success':False, 'msg':'Error'}
 
-def download( inFilePath, inFileObj, attachment = False ):
+
+def download( py_fs, path, attachment = False ):
+    '''
+    下载或查看文件
+    '''
+    if py_fs.isdir(path): return HttpResponseBadRequest("400 bad request")
+    if not py_fs.exists(path): raise Http404
+    file = py_fs.open(path,'rb')
     import mimetypes
-    inFileName = inFilePath.split('/')[-1]
+    inFileName = path.split('/')[-1]
     mt = mimetypes.guess_type(inFileName)
     response = HttpResponse(content_type=mt)
     if attachment:
         response['Content-Disposition'] = 'attachment; filename=%s' % inFileName
-    response.write(inFileObj.read())
+    response.write(file.read())
     return response
 
 
