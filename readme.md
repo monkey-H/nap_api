@@ -70,7 +70,7 @@ restful api for nap application
 		xhr.send(file);   
 		```
 		* 一般post请求  
-		```javascript
+		```
 		formdata.append("path","localfolder/new");
 		formdata.append("file1",file);
 		xhr.open('POST', 'http://127.0.0.1:8000/fs/filebrowser/upload/', true);
