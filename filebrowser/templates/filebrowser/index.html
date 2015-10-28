@@ -16,13 +16,10 @@ function send_req()
 	var fileInput = document.getElementById('the_file');
 	var file = fileInput.files[0];
 	var xhr = new XMLHttpRequest();
-	var formdata = new FormData();
 
 	xhr.open('POST', 'http://127.0.0.1:8000/fs/filebrowser/upload/', true);
 	xhr.setRequestHeader("X-File-Name","localfolder/new/" + file.name);
 	xhr.setRequestHeader("X-Requested-With","XMLHttpRequest");
-
-	alert(file.name);
 	xhr.send(file);
 }
 
@@ -38,10 +35,7 @@ function send_req()
 	formdata.append("path","localfolder/new");
 	formdata.append("file1",file);
 	xhr.open('POST', 'http://127.0.0.1:8000/fs/filebrowser/upload/', true);
-
-	alert(file.name);
 	xhr.send(formdata);
 }
 */
 </script>
-

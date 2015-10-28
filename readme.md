@@ -1,10 +1,10 @@
 restful api for nap application
 ===============================
 
-### rest_api: 应用的状态信息
+###rest_api: 应用的状态信息
 
 
-### filebrowser:访问主机文件系统
+###filebrowser:访问主机文件系统
 1. 请求一个文件夹下的目录树  
 	* 方法: POST  
   	* url: /fs/filebrowser/api/  
@@ -57,4 +57,28 @@ restful api for nap application
     	* cmd="download"
 		* file="key/path"
   	* 返回值:   
-    参数正确时,下载文件,错误时返回404  
+    参数正确时,下载文件,错误时返回404   
+7. 上传文件:  
+	* 方法: POST
+	* url: /fs/upload/
+	* 参数, 请求方式有两种:
+		* XMLHttpRequest:  
+		```
+		xhr.open('POST', 'http://127.0.0.1:8000/fs/filebrowser/upload/', true);
+		xhr.setRequestHeader("X-File-Name","localfolder/new/" + file.name);
+		xhr.setRequestHeader("X-Requested-With","XMLHttpRequest");
+		xhr.send(file);   
+		```
+		* 一般post请求  
+		```javascript
+		formdata.append("path","localfolder/new");
+		formdata.append("file1",file);
+		xhr.open('POST', 'http://127.0.0.1:8000/fs/filebrowser/upload/', true);
+		xhr.send(formdata);
+		```
+	* 返回值:   
+	参数等正确时，返回  
+	`
+	{"success":True, files:{}}
+	`   
+	请求错误时，返回400或404异常
