@@ -64,6 +64,7 @@ restful api for nap application
 	* 参数, 请求方式有两种:
 		* XMLHttpRequest:  
 		```
+		xhr = new XMLHttpRequest()
 		xhr.open('POST', 'http://127.0.0.1:8000/fs/filebrowser/upload/', true);
 		xhr.setRequestHeader("X-File-Name","localfolder/new/" + file.name);
 		xhr.setRequestHeader("X-Requested-With","XMLHttpRequest");
@@ -71,6 +72,7 @@ restful api for nap application
 		```
 		* 一般post请求  
 		```
+		formdata = new FormData()
 		formdata.append("path","localfolder/new");
 		formdata.append("file1",file);
 		xhr.open('POST', 'http://127.0.0.1:8000/fs/filebrowser/upload/', true);
