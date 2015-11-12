@@ -3,7 +3,9 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_api.models import Service,App
 from rest_api.serializers import ServiceSerializer,AppSerializer
+from rest_framework.reverse import reverse
 import commands
+
 from rest_api.utils import parse_service_content,parse_app_content
 from django.contrib.auth import authenticate
 
@@ -76,3 +78,11 @@ def user_authent(request):
             return Response({'login':'ok'})
         else:
             return Response({'login':'fail'})
+
+
+@api_view(('GET',))
+def api_root(request, format=None):
+    return Response({
+        'services': reverse('services', request=request, format=None),
+        'instances': reverse('instances', request=request, format=None)
+    })
