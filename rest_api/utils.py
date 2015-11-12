@@ -1,9 +1,10 @@
+# coding: utf-8
 import commands
 import re
 
 def parse_service_content(raw_content):
     '''
-    get all services detaild and return
+    get all services detail and return
     '''
     service_record = []
     services = raw_content.split('\n')
@@ -21,7 +22,6 @@ def parse_service_content(raw_content):
         #get instance num of the service
         status,output = commands.getstatusoutput("nap get_instances_num %s" % item)
         service_i['num'] = output
-
         service_record.append(service_i)
     return service_record
 
@@ -40,5 +40,4 @@ def parse_app_content(raw_content):
         inst['active'] = fields[2]
         inst['sub'] = fields[3]
         instances.append(inst)
-
     return instances
