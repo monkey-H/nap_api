@@ -1,29 +1,16 @@
 restful api for nap application
-<<<<<<< HEAD
-=======
-===============================
->>>>>>> 4fe735db2e90a2963b67d4ac5f7dbd2dcf111bfa
 
 ### rest_api: 应用的状态信息
 
 
 ### filebrowser:访问主机文件系统
 1. 请求一个文件夹下的目录树  
-<<<<<<< HEAD
-  --方法: POST  
-  --url: /fs/filebrowser/api/  
-  --参数:   
-	* cmd="get"
-    * path="key/path" (key 为配置文件中主机提供的文件系统的根目录,目前只有localfolder可选,path为请求的路径)
-  --返回值: json格式数据  
-=======
 	* 方法: POST  
   	* url: /fs/filebrowser/api/  
   	* 参数:
 		* cmd="get"
     	* path="key/path" (key 为配置文件中主机提供的文件系统的根目录,目前只有		localfolder可选,path为请求的路径)  
   	* 返回值: json格式数据  
->>>>>>> 4fe735db2e90a2963b67d4ac5f7dbd2dcf111bfa
 
 2. 新建目录
 	* 方法: POST  
@@ -63,15 +50,6 @@ restful api for nap application
     参数正确时,返回文件的内容,错误时返回404  
 
 6. 下载文件:
-<<<<<<< HEAD
-  --方法: GET  
-  --url: fs/filebrowser/api/  
-  --参数:   
-    * cmd="download"
-	* file="key/path"
-  --返回值:   
-    参数正确时,下载文件,错误时返回404  
-=======
   	* 方法: GET  
   	* url: fs/filebrowser/api/  
   	* 参数:   
@@ -79,6 +57,7 @@ restful api for nap application
 		* file="key/path"
   	* 返回值:   
     参数正确时,下载文件,错误时返回404   
+
 7. 上传文件:  
 	* 方法: POST
 	* url: /fs/upload/
@@ -105,4 +84,3 @@ restful api for nap application
 	{"success":True, files:{}}
 	`   
 	请求错误时，返回400或404异常
->>>>>>> 4fe735db2e90a2963b67d4ac5f7dbd2dcf111bfa
