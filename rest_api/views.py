@@ -1,20 +1,31 @@
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
-from rest_api.models import Service,App
-from rest_api.serializers import ServiceSerializer,AppSerializer
 from rest_framework.reverse import reverse
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+from django.contrib.auth import authenticate
+from rest_framework.authtoken.models import Token
 import commands
 
+from rest_api.models import Service,App
+from rest_api.serializers import ServiceSerializer,AppSerializer
 from rest_api.utils import parse_service_content,parse_app_content
-from django.contrib.auth import authenticate
 
 
 @api_view(['GET', 'POST'])
+@authentication_classes((TokenAuthentication,))
+@permission_classes((IsAuthenticated,))
 def service_list(request, format=None):
     '''
     list all servie or create a service
     '''
+    test_data = {
+            "hello":1,
+            "world":2
+            }
+    return Response(test_data)
+
     if request.method == 'GET':
         ret_data = {}
         #get paras from get request
@@ -41,6 +52,8 @@ def service_list(request, format=None):
         pass
 
 @api_view(['GET', 'POST'])
+@authentication_classes((TokenAuthentication,))
+@permission_classes((IsAuthenticated,))
 def app_list(request, format=None):
     '''
     list apps of specific service
@@ -60,24 +73,6 @@ def app_list(request, format=None):
         return Response(ret_data)
     elif request.method == 'POST':
         pass
-
-@api_view(['POST'])
-def user_authent(request):
-    '''
-    authenticate users
-    '''
-    if request.method == 'POST':
-        try:
-            username = request.POST['username']
-            password = request.POST['password']
-        except:
-            return Response({},status=status.HTTP_400_BAD_REQUEST)
-
-        user = authenticate(username=username,password=password)
-        if user is not None and user.is_active:
-            return Response({'login':'ok'})
-        else:
-            return Response({'login':'fail'})
 
 
 @api_view(('GET',))
