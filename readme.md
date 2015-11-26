@@ -1,5 +1,11 @@
 restful api for nap application
 
+环境依赖：
+> sudo pip install django==1.8.4
+> sudo pip install django-grappelli
+> sudo pip install djangorestframework
+> sudo pip install fs
+
 ### rest_api: 应用的状态信息
 
 

@@ -6,7 +6,7 @@ from rest_api import views
 urlpatterns = [
     url(r'^$', views.api_root),
     url(r'^services$', views.service_list, name='services'),
-    url(r'^instances$', views.app_list, name='instances'),
+    url(r'^projects$', views.project_list, name='instances'),
     url(r'^auth$', obtain_auth_token),
 ]
 

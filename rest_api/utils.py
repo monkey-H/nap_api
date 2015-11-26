@@ -1,6 +1,7 @@
 # coding: utf-8
 import commands
 import re
+from treat import Treat
 
 def parse_service_content(raw_content):
     '''
