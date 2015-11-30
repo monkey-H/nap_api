@@ -10,7 +10,6 @@ import commands
 
 from rest_api.models import Service,App
 from rest_api.serializers import ServiceSerializer,AppSerializer
-from rest_api.utils import parse_service_content,parse_app_content
 from rest_api.transact import AppTransac
 
 
@@ -22,19 +21,19 @@ def project_list(request, format=None):
     '''
     list all servie or create a service
     '''
-    poj_t = AppTransac('192.168.56.107', 'monkey', 'monkey', 'monkey')
+    poj_trsc = AppTransac('monkey', 'monkey')
 
     if request.method == 'GET':
         ret_data = {}
         #get paras from get request
         try:
             username = request.GET['username']
-            start_index = int(request.GET['start'])
-            length = int(request.GET['length'])
+            begin_index = int(request.GET['start'])
+            length = int(request.GET['limit'])
         except:
             return Response({},status=status.HTTP_400_BAD_REQUEST)
 
-        poj_list = poj_t.project_list()
+        poj_list = poj_trsc.project_list(begin_index, length)
 
         #get all service name
         ret_data['success'] = "true"
@@ -43,7 +42,17 @@ def project_list(request, format=None):
         return Response(ret_data)
 
     elif request.method == 'POST':
-        pass
+        ret_data = {}
+        try:
+            username = request.POST['username']
+            projname = request.POST['projname']
+            projurl = request.POST['projurl']
+        except:
+            return Response({},status=status.HTTP_400_BAD_REQUEST)
+        
+        status, log = poj_trsc.create_project(projname, projurl)
+
+        return Response({'log':log})
 
 
 @api_view(['GET'])
@@ -54,7 +63,7 @@ def service_list(request, format=None):
     list services of a project
     '''
     ret_data = {}
-    srv_t = AppTransac('192.168.56.107', 'monkey', 'monkey', 'monkey')
+    srv_t = AppTransac('monkey', 'monkey')
 
     try:
         project_name = request.GET['project']
