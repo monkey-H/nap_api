@@ -11,14 +11,14 @@ sources = {
     'localfolder':{
         'cls':OSFS
         ,'params':{
-            'root_path':r'/home/cshuo/Documents/django_projects/test_py_fs/test1'
+            'root_path':r'/home/monkey/Documents/filebrowser/monkey'
             #,'encoding':
         }
     }
     ,'NAP':{
         'cls':OSFS
         ,'params':{
-            'root_path':r'/home/cshuo/Documents/django_projects/test_py_fs/test2'
+            'root_path':r'/home/monkey/cshuo/fs/test2'
             #,'encoding':
         }
     }

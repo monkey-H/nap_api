@@ -34,6 +34,7 @@ def dirToJson( inFs, path = '/', recursive = False):
             ,'leaf':isLeaf
             ,'iconCls':iconCls
             ,'items':[]
+            ,'path': fPath
         }
         # recursive and isdir ?
         if not isLeaf and recursive:
@@ -57,7 +58,7 @@ def splitPath(inPath):
     return root, path
 
 
-def getFsFromKey( key ):
+def getFsFromKey(key):
     if key in sources.keys():
         source = sources[key]
         cur_fs = source['cls']( **source['params'] )
@@ -67,7 +68,7 @@ def getFsFromKey( key ):
 
 @decorators.ajax_request
 @csrf_exempt
-def api( request ):
+def api(request):
     cmd = request.POST.get('cmd', request.GET.get('cmd'))
     if not cmd: raise Http404
 
