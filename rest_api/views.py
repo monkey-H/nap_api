@@ -1,12 +1,10 @@
 # coding: utf-8
-
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import authenticate
-from rest_framework.authtoken.models import Token
 from rest_framework.decorators import (
         api_view, 
         authentication_classes, 
@@ -14,7 +12,6 @@ from rest_framework.decorators import (
 )
 
 from rest_api.models import Service,App
-from rest_api.serializers import ServiceSerializer,AppSerializer
 from compose.database import database
 from compose.restful import create_project
 
@@ -64,12 +61,12 @@ def project_list(request, format=None):
 @authentication_classes((TokenAuthentication,))
 @permission_classes((IsAuthenticated,))
 def project(request, project, format=None):
-    ret_data = {}
     poj_trsc = database('monkey', 'monkey')
     
     if request.method == 'DELETE':
         sts, log = poj_trsc.destroy_project(project)
         return Response({'Delete': sts, 'log':log})
+
     elif request.method == 'GET':
         services = poj_trsc.service_list(project)
         ret_data = {}

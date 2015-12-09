@@ -14,7 +14,7 @@ def test_hello(request):
     '''
     return render(request, 'filebrowser/index.html')
 
-def dirToJson( inFs, path = '/', recursive = False):
+def dirToJson(inFs, path = '/', recursive = False):
     '''
     将一个指定文件夹目录树返回,json格式数据
     '''
@@ -32,9 +32,9 @@ def dirToJson( inFs, path = '/', recursive = False):
             ,'modified_time':infos.get('modified_time', datetime.datetime.now()).isoformat()
             ,'created_time':infos.get('created_time', datetime.datetime.now()).isoformat()
             ,'leaf':isLeaf
-            ,'iconCls':iconCls
+            ,'filetype':iconCls
             ,'items':[]
-            ,'path': fPath
+            ,'id': 'localfolder/' + fPath
         }
         # recursive and isdir ?
         if not isLeaf and recursive:
@@ -78,7 +78,7 @@ def api(request):
     elif cmd == 'rename':
         root, path = splitPath( request.POST['oldname'] )
     elif cmd in ['newdir', 'get', 'delete']:
-        root, path = splitPath( request.POST['path'] )
+        root, path = splitPath( request.POST['node'] )
     else:
         return HttpResponseBadRequest("400 bad request")
 
@@ -158,6 +158,7 @@ def download( py_fs, path, attachment = False ):
 #@decorators.swfupload_cookies_auth
 @decorators.ajax_request
 @csrf_exempt
+
 def upload(request):
 
     file_list = []
@@ -187,7 +188,7 @@ def upload(request):
 
     #使用一般的post请求
     else:
-        root, path = splitPath(request.POST['path'].decode('UTF-8'))
+        root, path = splitPath(request.POST['node'].decode('UTF-8'))
         cur_fs = getFsFromKey(root)
         if not cur_fs: raise Http404
         for key in request.FILES.keys():

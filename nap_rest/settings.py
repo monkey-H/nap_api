@@ -43,6 +43,7 @@ INSTALLED_APPS = (
     'rest_framework.authtoken',
     'rest_api',
     'filebrowser',
+    'filebrowser_rest',
 )
 
 MIDDLEWARE_CLASSES = (
