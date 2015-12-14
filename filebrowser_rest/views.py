@@ -97,6 +97,8 @@ def dir_operate(request, format=None):
         return Response({}, status = status.HTTP_400_BAD_REQUEST)
     
     if request.method == 'GET':
+        if not cur_fs.exists(path):
+            return Response({}, status = status.HTTP_404_NOT_FOUND)
         data = dirToJson(cur_fs, path, recursive = False)
         return Response(data)
 

@@ -3,14 +3,20 @@ from settings import sources
 import os
 import datetime
 from django.http import HttpResponse
+from rest_framework import status
+from rest_framework.response import Response
 
 
 def download( py_fs, path, attachment = False ):
     '''
     下载或查看文件
     '''
-    if py_fs.isdir(path): return HttpResponseBadRequest("400 bad request")
-    if not py_fs.exists(path): raise Http404
+    if py_fs.isdir(path):
+	return Response({}, status=status.HTTP_400_BAD_REQUEST)
+
+    if not py_fs.exists(path):
+	return Response({}, status=status.HTTP_404_NOT_FOUND)
+
     file = py_fs.open(path,'rb')
     import mimetypes
     inFileName = path.split('/')[-1]
