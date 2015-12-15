@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import ldap
+from django_auth_ldap.config import LDAPSearch
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -118,4 +120,21 @@ REST_FRAMEWORK = {
         'DEFAULT_AUTHENTICATION_CLASSES': (
             'rest_framework.authentication.TokenAuthentication',
         )
+}
+
+#ldap configuration 
+AUTHENTICATION_BACKENDS = (
+     'django_auth_ldap.backend.LDAPBackend',
+     'django.contrib.auth.backends.ModelBackend',
+)
+
+AUTH_LDAP_SERVER_URI = 'ldap://172.17.0.3'
+AUTH_LDAP_BIND_DN = 'cn=admin,dc=nap,dc=com'
+AUTH_LDAP_BIND_PASSWORD = "cshuo"
+AUTH_LDAP_USER_SEARCH = LDAPSearch("ou=people,dc=nap,dc=com", ldap.SCOPE_SUBTREE, "(uid=%(user)s)")
+
+AUTH_LDAP_USER_ATTR_MAP = {
+     "first_name": "givenName",
+     "last_name": "sn",
+     "email": "mail"
 }
