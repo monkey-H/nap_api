@@ -11,7 +11,7 @@ sources = {
     'localfolder':{
         'cls':OSFS
         ,'params':{
-            'root_path':r'/home/monkey/cshuo/fs'
+            'root_path':r'/home/monkey/Documents/filebrowser/monkey'
             #,'encoding':
         }
     }

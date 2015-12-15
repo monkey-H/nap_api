@@ -23,64 +23,79 @@ from filebrowser_rest.utils import(
 #@authentication_classes((TokenAuthentication,))
 #@permission_classes((IsAuthenticated,))
 def file_operate(request, format=None):
-    if request.method == 'GET':                 #请求文件，查看或下载
+    if request.method == 'GET':
         root, path = splitPath(request.GET['node'])
-        cmd = request.GET['cmd']
+    else:
+        root, path = splitPath(request.data['node'])
 
+    if root:
+        cur_fs = getFsFromKey(root)
+        if not cur_fs:
+            return Response({}, status = status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response({}, status = status.HTTP_400_BAD_REQUEST)
+
+    if request.method == 'GET':                 #请求文件，查看或下载
+        cmd = request.GET['cmd']
         if cmd not in ['view', 'download']:
             return Response({}, status = status.HTTP_400_BAD_REQUEST)
-
-        if root:
-            cur_fs = getFsFromKey(root)
-            if not cur_fs: 
-                return Response({}, status=status.HTTP_404_NOT_FOUND)
-        else:
-            return Response({}, status=status.HTTP_400_BAD_REQUEST)
-
         attachment = True if cmd == 'download' else False
         return download(cur_fs, path, attachment)
 
-    if request.method == 'POST':                #修改或上传文件
-        upload(request)
-
-    if request.method == 'PUT':                 #修改文件名字
-        root1, path1 = splitPath(request.data['oldname'])
-        root2, path2 = splitPath(request.data['newname'])
-        if root1 != root2 or not root1 or not root2:
-            return Response({}, status = status.HTTP_400_BAD_REQUEST)
-        cur_fs = getFsFromKey(root1)
-
-        if not cur_fs.exists(path1):
-            return Response({'log':'no such file'}, status = status.HTTP_404_NOT_FOUND)
-
+    elif request.method == 'POST':                #修改或上传文件
         try:
-            cur_fs.rename(path1, path2)
-            return Response({'reRname':'success', 'path':path2})
+            content = request.data['content']
+            cmd =  request.data['cmd']
         except:
             return Response({}, status = status.HTTP_400_BAD_REQUEST)
 
-    if request.method == 'DELETE':              #删除一个文件
-        try:
-            filepath = request.data['node']
-        except:
-            return Response({}, status = status.HTTP_400_BAD_REQUEST)
-
-        root, path = splitPath(request.data['node'])
-        if root:
-            cur_fs = getFsFromKey(root)
-            if not cur_fs:
-                return Response({}, status = status.HTTP_404_NOT_FOUND)
+        f_exists = 1 if cur_fs.exists(path) else 0
+        if cmd == 'update':
+            if not f_exists:
+                return Response({'log':'{0} not exists'.format(path)}, status = status.HTTP_404_NOT_FOUND)
         else:
+            if f_exists:
+                return Response({'log':'{0} already exists'.format(path)}, status = status.HTTP_400_BAD_REQUEST)
+        try:
+            f = cur_fs.open(path, 'wb')
+            f.write(content)
+            f.close()
+            if cmd == 'update':
+                return Response({'log':'{0} updated successfully!!'.format(path)})
+            else:
+                return Response({'log':'{0} created successfully!!'.format(path)})
+        except:
+            if cmd == 'update':
+                return Response({'log':'{0} updated failed!!'.format(path)})
+            else:
+                return Response({'log':'{0} created failed!!'.format(path)})
+
+    elif request.method == 'PUT':                 #修改文件名字
+        root2, path2 = splitPath(request.data['newname'])
+        if root != root2 or not root2:
             return Response({}, status = status.HTTP_400_BAD_REQUEST)
+        cur_fs = getFsFromKey(root)
 
         if not cur_fs.exists(path):
             return Response({'log':'no such file'}, status = status.HTTP_404_NOT_FOUND)
 
-        cur_fs.remove(path)
-        return Response({'delete':'suceess', 'file':path})
+        try:
+            cur_fs.rename(path, path2)
+            return Response({'rename':'success', 'path':path2})
+        except:
+            return Response({'rename':'failed', 'log':'failed to rename file {0}'.format(path)})
+
+    elif request.method == 'DELETE':              #删除一个文件
+        if not cur_fs.exists(path):
+            return Response({'log':'no such file'}, status = status.HTTP_404_NOT_FOUND)
+        try:
+            cur_fs.remove(path)
+            return Response({'delete':'suceess', 'file':path})
+        except:
+            return Response({'delete':'failed', 'log':'failed to delete file {0}'.format(path)})
 
 
-@api_view(['GET', 'POST', 'PUT'])
+@api_view(['GET', 'POST', 'PUT','DELETE'])
 #@authentication_classes((TokenAuthentication,))
 #@permission_classes((IsAuthenticated,))
 def dir_operate(request, format=None):
