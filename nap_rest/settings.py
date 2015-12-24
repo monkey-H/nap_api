@@ -128,7 +128,7 @@ AUTHENTICATION_BACKENDS = (
      'django.contrib.auth.backends.ModelBackend',
 )
 
-AUTH_LDAP_SERVER_URI = 'ldap://172.17.0.3'
+AUTH_LDAP_SERVER_URI = 'ldap://172.17.0.2'
 AUTH_LDAP_BIND_DN = 'cn=admin,dc=nap,dc=com'
 AUTH_LDAP_BIND_PASSWORD = "cshuo"
 AUTH_LDAP_USER_SEARCH = LDAPSearch("ou=people,dc=nap,dc=com", ldap.SCOPE_SUBTREE, "(uid=%(user)s)")
@@ -136,5 +136,4 @@ AUTH_LDAP_USER_SEARCH = LDAPSearch("ou=people,dc=nap,dc=com", ldap.SCOPE_SUBTREE
 AUTH_LDAP_USER_ATTR_MAP = {
      "first_name": "givenName",
      "last_name": "sn",
-     "email": "mail"
 }

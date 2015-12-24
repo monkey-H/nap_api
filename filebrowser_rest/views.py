@@ -20,16 +20,17 @@ from filebrowser_rest.utils import(
 
 # Create your views here.
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
-#@authentication_classes((TokenAuthentication,))
-#@permission_classes((IsAuthenticated,))
+@authentication_classes((TokenAuthentication,))
+@permission_classes((IsAuthenticated,))
 def file_operate(request, format=None):
+    username = str(request.user)
     if request.method == 'GET':
-        root, path = splitPath(request.GET['node'])
+        root, path = splitPath(request.GET['path'])
     else:
-        root, path = splitPath(request.data['node'])
+        root, path = splitPath(request.data['path'])
 
     if root:
-        cur_fs = getFsFromKey(root)
+        cur_fs = getFsFromKey(root, username)
         if not cur_fs:
             return Response({}, status = status.HTTP_400_BAD_REQUEST)
     else:
@@ -74,11 +75,10 @@ def file_operate(request, format=None):
         root2, path2 = splitPath(request.data['newname'])
         if root != root2 or not root2:
             return Response({}, status = status.HTTP_400_BAD_REQUEST)
-        cur_fs = getFsFromKey(root)
+        cur_fs = getFsFromKey(root, username)
 
         if not cur_fs.exists(path):
             return Response({'log':'no such file'}, status = status.HTTP_404_NOT_FOUND)
-
         try:
             cur_fs.rename(path, path2)
             return Response({'rename':'success', 'path':path2})
@@ -96,16 +96,17 @@ def file_operate(request, format=None):
 
 
 @api_view(['GET', 'POST', 'PUT','DELETE'])
-#@authentication_classes((TokenAuthentication,))
-#@permission_classes((IsAuthenticated,))
+@authentication_classes((TokenAuthentication,))
+@permission_classes((IsAuthenticated,))
 def dir_operate(request, format=None):
+    username = str(request.user)
     if request.method == 'GET':
-        root, path = splitPath(request.GET['node'])
+        root, path = splitPath(request.GET['path'])
     else:
-        root, path = splitPath(request.data['node'])
+        root, path = splitPath(request.data['path'])
 
     if root:
-        cur_fs = getFsFromKey(root)
+        cur_fs = getFsFromKey(root, username)
         if not cur_fs:
             return Response({}, status = status.HTTP_400_BAD_REQUEST)
     else:
@@ -113,7 +114,7 @@ def dir_operate(request, format=None):
     
     if request.method == 'GET':
         if not cur_fs.exists(path):
-            return Response({}, status = status.HTTP_404_NOT_FOUND)
+            return Response([], status = status.HTTP_404_NOT_FOUND)
         data = dirToJson(cur_fs, path, recursive = False)
         return Response(data)
 
@@ -125,15 +126,20 @@ def dir_operate(request, format=None):
     
     if request.method == 'DELETE':
         if not cur_fs.exists(path):
-            return Response({'delete':'fail', 'log':'no such directory'}, 
-                    status = status.HTTP_400_BAD_REQUEST)
-        cur_fs.removedir(path)
+            return Response({'delete':'fail', 'log':'no such directory'}, status = status.HTTP_400_BAD_REQUEST)
+        if cur_fs.isdir(path):
+            cur_fs.removedir(path, recursive=True, force=True)
+        else:
+            cur_fs.remove(path)
         return Response({'delete':'success', 'directory':path})
 
     if request.method == 'PUT':
         root2, path2 = splitPath(request.data['newname'])
         if not root2 or not root == root2:
             return Response({}, status = status.HTTP_400_BAD_REQUEST)
+
+        if not cur_fs.exists(path):
+            return Response({'log':'desc does not exists'}, status = status.HTTP_404_NOT_FOUND)
         try:
             cur_fs.rename(path, path2)
             return Response({'rename':'success'})
@@ -141,7 +147,7 @@ def dir_operate(request, format=None):
             return Response({'log':'something wrong in renaming directory'}, status = status.HTTP_400_BAD_REQUEST)
 
 
-def upload(request):
+def upload(request, username):
     file_list = []
 
     #设置文件类型限制
@@ -155,7 +161,7 @@ def upload(request):
             return Response({}, status = status.HTTP_400_BAD_REQUEST)
 
         root, path = splitPath( path.decode('UTF-8') )
-        cur_fs = getFsFromKey( root )
+        cur_fs = getFsFromKey( root, username )
         if not cur_fs:
             raise Response({}, status = status.HTTP_404_NOT_FOUND)
 
@@ -173,8 +179,8 @@ def upload(request):
 
     #使用一般的post请求
     else:
-        root, path = splitPath(request.POST['node'].decode('UTF-8'))
-        cur_fs = getFsFromKey(root)
+        root, path = splitPath(request.POST['path'].decode('UTF-8'))
+        cur_fs = getFsFromKey(root, username)
         if not cur_fs: 
             raise Response({}, status = status.HTTP_404_NOT_FOUND)
 

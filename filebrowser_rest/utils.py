@@ -48,7 +48,7 @@ def dirToJson(inFs, path = '/', recursive = False):
             ,'leaf':isLeaf
             ,'filetype':iconCls
             ,'items':[]
-            ,'id': 'localfolder/' + fPath
+            ,'path': 'localfolder/' + fPath
         }
         # recursive and isdir ?
         if not isLeaf and recursive:
@@ -72,10 +72,11 @@ def splitPath(inPath):
     return root, path
 
 
-def getFsFromKey(key):
+def getFsFromKey(key, username):
     if key in sources.keys():
         source = sources[key]
-        cur_fs = source['cls']( **source['params'] )
+	root_path = source['params']['root_path'] + username
+        cur_fs = source['cls'](root_path)
         return cur_fs
     else:
         return None

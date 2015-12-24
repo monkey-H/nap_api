@@ -23,13 +23,13 @@ def project_list(request, format=None):
     '''
     list all servie or create a service
     '''
-    poj_trsc = database('monkey', 'monkey')
+    username,passwd = str(request.user), str(request.user)
+    poj_trsc = database(username, passwd)
 
     if request.method == 'GET':
         ret_data = {}
         #get paras from get request
         try:
-            username = request.GET['username']
             begin_index = int(request.GET['start'])
             length = int(request.GET['limit'])
         except:
@@ -46,13 +46,12 @@ def project_list(request, format=None):
     elif request.method == 'POST':
         ret_data = {}
         try:
-            username = request.POST['username']
             projname = request.POST['projname']
             projurl = request.POST['projurl']
         except:
             return Response({},status=status.HTTP_400_BAD_REQUEST)
 
-        sts, log = create_project('monkey', 'monkey', projname, projurl)
+        sts, log = create_project(username, passwd, projname, projurl)
 
         return Response({'log':log})
 
@@ -61,7 +60,8 @@ def project_list(request, format=None):
 @authentication_classes((TokenAuthentication,))
 @permission_classes((IsAuthenticated,))
 def project(request, project, format=None):
-    poj_trsc = database('monkey', 'monkey')
+    username,passwd = str(request.user), str(request.user)
+    poj_trsc = database(username, passwd)
     
     if request.method == 'DELETE':
         sts, log = poj_trsc.destroy_project(project)
@@ -80,7 +80,8 @@ def project(request, project, format=None):
 @authentication_classes((TokenAuthentication,))
 @permission_classes((IsAuthenticated,))
 def shellbox(request, format=None):
-    shell_trsc = database('monkey', 'monkey')
+    username,passwd = str(request.user), str(request.user)
+    shell_trsc = database(username, passwd)
 
     if request.method == 'GET':
         try:
@@ -102,7 +103,8 @@ def service_list(request, format=None):
     list services of a project
     '''
     ret_data = {}
-    srv_t = database('monkey', 'monkey')
+    username,passwd = str(request.user), str(request.user)
+    srv_t = database(username, passwd)
 
     try:
         project_name = request.GET['project']
@@ -125,7 +127,8 @@ def log(request, format=None):
     get logs of a specific service
     '''
     ret_data = {}
-    log_tsc = database('monkey', 'monkey')
+    username,passwd = str(request.user), str(request.user)
+    log_tsc = database(username, passwd)
 
     try:
         project_name = request.GET['project']
