@@ -147,6 +147,61 @@ def dir_operate(request, format=None):
             return Response({'log':'something wrong in renaming directory'}, status = status.HTTP_400_BAD_REQUEST)
 
 
+
+@api_view(['PUT'])
+@authentication_classes((TokenAuthentication,))
+@permission_classes((IsAuthenticated,))
+def cpmv(request):
+    '''
+    复制或者移动文件或文件夹
+    '''
+    username = str(request.user)
+    if request.method == 'PUT':
+        '''cmd指定复制或移动，src为要移动的文件或文件夹，dst为指定的目录'''
+        try:
+            cmd = request.data['cmd']
+            src = request.data['src']
+            dst = request.data['dst']
+        except:
+            return Response({}, status = status.HTTP_400_BAD_REQUEST)
+
+        src_root, src_path = splitPath(src)
+        dst_root, dst_path = splitPath(dst)
+
+        if src_root != dst_root:
+            return Response({}, status = status.HTTP_400_BAD_REQUEST)
+
+        cur_fs = getFsFromKey(src_root, username)
+
+        if not cur_fs.exists(src_path):
+            return Response({'log':'src does not exists'}, status = status.HTTP_404_NOT_FOUND)
+
+        name = src_path.strip().split('/')[-1]
+        if cmd == 'copy':
+            try:
+                if cur_fs.isdir(src_path):
+                    cur_fs.copydir(src_path, dst_path+'/'+name)
+                else:
+                    cur_fs.copy(src_path, dst_path+'/'+name)
+                return Response({'log':'copy success...'})
+            except:
+                return Response({'log':'copy failed...already exists!!!'})
+        elif cmd == 'move':
+            try:
+                if cur_fs.isdir(src_path):
+                    cur_fs.movedir(src_path, dst_path+'/'+name)
+                else:
+                    cur_fs.move(src_path, dst_path+'/'+name)
+                return Response({'log':'move success...'})
+            except:
+                return Response({'log':'move failed...already exists!!!'})
+        else:
+            return Response({}, status = status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response({}, status = status.HTTP_400_BAD_REQUEST)
+
+
+
 def upload(request, username):
     file_list = []
 
