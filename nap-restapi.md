@@ -1,13 +1,12 @@
-# restful api for nap application
-> NAP的restful api是通过JSON来对平台进行管理，包括平台硬件的监控、应用的创建、状态的查询以及文件管理等。restful api是通过Django自身提供的[REST framework](http://www.django-rest-framework.org/)实现的，详见链接。
+title: Restful Api for NAP
+date: 2015-11-09 15:54:17
+author: cshuo
+category: web
+tags: [restful]
+---
+NAP的restful api是通过JSON来对平台进行管理，包括平台硬件的监控、应用的创建、状态的查询以及文件管理等。restful api是通过Django自身提供的[REST framework](http://www.django-rest-framework.org/)实现的，详见链接。
 
-## 环境依赖：
-> sudo pip install django==1.8.4    
-> sudo pip install django-grappelli     
-> sudo apt-get install python-ldap sudo pip install django-auth-ldap
-> sudo pip install djangorestframework     
-> sudo pip install fs     
-
+<!--more-->
 ## app_api: 应用的状态信息
 该部分是对运行在NAP平台上的应用进行管理的接口，包括应用和服务的创建、应用状态的获取以及应用的开启和暂停等。
 
@@ -19,10 +18,10 @@ http http://127.0.0.1:8000/app/projects/ Authorizations:'Token d83***3d8'
 ```
 
 1. projects的请求
-    - 方法: GET
-    - url: /app/projects
-    - 参数: {'username':xxx, 'start':xxx, 'limit':xxx}
-    - 返回值:    
+    \- 方法: GET
+    \- url: /app/projects
+    \- 参数: {'username':xxx, 'start':xxx, 'limit':xxx}
+    \- 返回值:    
       参数错误时，返回400     
       token错误时，返回401 UNAUTHORIZED
       参数正确，返回Json格式数据
@@ -45,10 +44,10 @@ http http://127.0.0.1:8000/app/projects/ Authorizations:'Token d83***3d8'
         ```
 
 2. projects创建
-    - 方法: POST
-    - url: /app/projects
-    - 参数: {'username':xxx, 'project':xxx, 'url':xxx}
-    - 返回值:
+    \- 方法: POST
+    \- url: /app/projects
+    \- 参数: {'username':xxx, 'project':xxx, 'url':xxx}
+    \- 返回值:
       请求参数错误情况下返回400
       token错误时，返回401 UNAUTHORIZED
       参数正确，根据提供的参数，返回相应的信息
@@ -59,10 +58,10 @@ http http://127.0.0.1:8000/app/projects/ Authorizations:'Token d83***3d8'
         ```
 
 3. project删除
-    - 方法: DELETE
-    - url: /app/projects/exp_poj
-    - 参数: {}
-    - 返回值:
+    \- 方法: DELETE
+    \- url: /app/projects/exp_poj
+    \- 参数: {}
+    \- 返回值:
       token错误时，返回401 UNAUTHORIZED
       认证成功, 返回相应的信息
         ```
@@ -73,10 +72,10 @@ http http://127.0.0.1:8000/app/projects/ Authorizations:'Token d83***3d8'
         ```
 
 4. 一个project对应的services列表
-    - 方法: GET
-    - url: /app/projects/exp_poj
-    - 参数: {}
-    - 返回值:   
+    \- 方法: GET
+    \- url: /app/projects/exp_poj
+    \- 参数: {}
+    \- 返回值:   
       请求错误情况下返回400
       token认证错误返回401 UNAUTHORIZED
       正确时，返回请求的实例，如下:   
@@ -103,10 +102,10 @@ http http://127.0.0.1:8000/app/projects/ Authorizations:'Token d83***3d8'
 
 
 4. 用户认证使用的是rest-framework自带的TokenAuthentication.
-    - 方法: Post
-    - url: /auth
-    - 参数: {'username':xxx, 'password':xxx}
-    - 返回值:
+    \- 方法: Post
+    \- url: /auth
+    \- 参数: {'username':xxx, 'password':xxx}
+    \- 返回值:
       请求正确，并成功认证返回    
         ```
         {
@@ -123,11 +122,11 @@ http http://127.0.0.1:8000/app/projects/ Authorizations:'Token d83***3d8'
 ## filebrowser:访问主机文件系统
 该部分是从开源项目[django-extjs-filebrowser](https://github.com/revolunet/django-extjs-filebrowser)的后台Django部分直接迁移出来的，并没有使用Django REST framework。
 1. 请求一个文件夹下的目录树  
-    - 方法: POST  
-    - url: /fs/filebrowser/api/  
-    - 参数: {'cmd': "get", 'path': "key/path"}
+    \- 方法: POST  
+    \- url: /fs/filebrowser/api/  
+    \- 参数: {'cmd': "get", 'path': "key/path"}
      (key 为配置文件中主机提供的文件系统的根目录,目前只有localfolder可选,path为请求的路径)   
-    - 返回值: json格式数据，示例如下:   
+    \- 返回值: json格式数据，示例如下:   
     ```
     $ http --form POST http://114.212.86.206:8000/fs/filebrowser/api/ cmd="get" path="localfolder/new/"
     (请求localfolder对应的根目录下new的目录树)
@@ -154,10 +153,10 @@ http http://127.0.0.1:8000/app/projects/ Authorizations:'Token d83***3d8'
     ```
 
 2. 新建目录
-    - 方法: POST  
-  	- url: fs/filebrowser/api/   
-  	- 参数: {'cmd': "newdir", 'path': "key/path"}
-  	- 返回值:  
+    \- 方法: POST  
+  	\- url: fs/filebrowser/api/   
+  	\- 参数: {'cmd': "newdir", 'path': "key/path"}
+  	\- 返回值:  
     参数正确时,返回数据
     ```
     {'success':True}
@@ -165,37 +164,37 @@ http http://127.0.0.1:8000/app/projects/ Authorizations:'Token d83***3d8'
     否则根据情况返回400,404  
 
 3. 重命名
-  	- 方法: POST  
-  	- url: fs/filebrowser/api/  
-  	- 参数: {'cmd': "rename", 'oldname': "key/path", 'newname': "key/path"}
-  	- 返回值:  
+  	\- 方法: POST  
+  	\- url: fs/filebrowser/api/  
+  	\- 参数: {'cmd': "rename", 'oldname': "key/path", 'newname': "key/path"}
+  	\- 返回值:  
     参数正确时,返回{'success': True},错误时返回400    
 
 4. 删除文件或文件夹  
-    - 方法: POST  
-    - url: fs/filebrowser/api/  
-  	- 参数: {'cmd': "delete",'path': "key/path"}
-  	- 返回值:  
+    \- 方法: POST  
+    \- url: fs/filebrowser/api/  
+  	\- 参数: {'cmd': "delete",'path': "key/path"}
+  	\- 返回值:  
     参数正确时,返回{'success': True},错误时返回404  
 
 5. 查看文件:
-  	- 方法: GET  
-    - url: fs/filebrowser/api/  
-  	- 参数: {'cmd': "view", 'file': "key/path"}
-  	- 返回值:  
+  	\- 方法: GET  
+    \- url: fs/filebrowser/api/  
+  	\- 参数: {'cmd': "view", 'file': "key/path"}
+  	\- 返回值:  
     参数正确时,返回文件的内容,错误时返回404  
 
 6. 下载文件:
-  	- 方法: GET  
-  	- url: fs/filebrowser/api/  
-  	- 参数: {'cmd': "download", 'file': "key/path"}
-  	- 返回值:   
+  	\- 方法: GET  
+  	\- url: fs/filebrowser/api/  
+  	\- 参数: {'cmd': "download", 'file': "key/path"}
+  	\- 返回值:   
     参数正确时,下载文件,错误时返回404   
 
 7. 上传文件:  
-	- 方法: POST
-	- url: /fs/upload/
-	- 参数, 请求方式有两种:
+	\- 方法: POST
+	\- url: /fs/upload/
+	\- 参数, 请求方式有两种:
 	   * XMLHttpRequest:  
 		```
 		xhr = new XMLHttpRequest()
@@ -212,7 +211,7 @@ http http://127.0.0.1:8000/app/projects/ Authorizations:'Token d83***3d8'
 		xhr.open('POST', 'http://127.0.0.1:8000/fs/filebrowser/upload/', true);
 		xhr.send(formdata);
 		```
-	- 返回值:   
+	\- 返回值:   
 	参数等正确时，返回  
 	```
 	{
