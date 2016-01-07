@@ -121,7 +121,7 @@ http http://127.0.0.1:8000/app/projects/ Authorizations:'Token d83***3d8'
 
 
 ## filebrowser:访问主机文件系统
-该部分是从开源项目[django-extjs-filebrowser](https://github.com/revolunet/django-extjs-filebrowser)的后台Django部分直接迁移出来的，并没有使用Django REST framework。     
+该部分是从开源项目[django-extjs-filebrowser](https://github.com/revolunet/django-extjs-filebrowser)的后台Django部分直接迁移出来的，针对django-restframework框架进行了相应的修改。
 
 1. 请求一个文件夹下的目录树  
     - 方法: POST  
