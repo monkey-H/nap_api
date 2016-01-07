@@ -4,7 +4,7 @@
 ## 环境依赖：
 > sudo pip install django==1.8.4    
 > sudo pip install django-grappelli     
-> sudo apt-get install python-ldap sudo pip install django-auth-ldap
+> sudo apt-get install python-ldap        
 > sudo pip install djangorestframework     
 > sudo pip install fs     
 
