@@ -128,7 +128,7 @@ def dir_operate(request, format=None):
         if not cur_fs.exists(path):
             return Response({'delete':'fail', 'log':'no such directory'}, status = status.HTTP_400_BAD_REQUEST)
         if cur_fs.isdir(path):
-            cur_fs.removedir(path, recursive=True, force=True)
+            cur_fs.removedir(path, force=True)
         else:
             cur_fs.remove(path)
         return Response({'delete':'success', 'directory':path})

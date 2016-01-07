@@ -12,8 +12,9 @@ from rest_framework.decorators import (
 )
 
 from rest_api.models import Service,App
-from compose.database import database
-from compose.restful import create_project
+#from compose.database import database
+#from compose.restful import create_project
+from compose import app_info, project_create
 
 
 @api_view(['GET', 'POST'])
@@ -24,7 +25,7 @@ def project_list(request, format=None):
     list all servie or create a service
     '''
     username,passwd = str(request.user), str(request.user)
-    poj_trsc = database(username, passwd)
+    #poj_trsc = database(username, passwd)
 
     if request.method == 'GET':
         ret_data = {}
@@ -35,7 +36,8 @@ def project_list(request, format=None):
         except:
             return Response({},status=status.HTTP_400_BAD_REQUEST)
 
-        poj_list = poj_trsc.project_list(begin_index, length)
+        #poj_list = poj_trsc.project_list(begin_index, length)
+        poj_list = app_info.project_list(username, passwd, begin_index, length)
 
         #get all service name
         ret_data['success'] = "true"
@@ -51,7 +53,7 @@ def project_list(request, format=None):
         except:
             return Response({},status=status.HTTP_400_BAD_REQUEST)
 
-        sts, log = create_project(username, passwd, projname, projurl)
+        sts, log = project_create.create_project_from_url(username, passwd, projname, projurl)
 
         return Response({'log':log})
 
@@ -61,14 +63,14 @@ def project_list(request, format=None):
 @permission_classes((IsAuthenticated,))
 def project(request, project, format=None):
     username,passwd = str(request.user), str(request.user)
-    poj_trsc = database(username, passwd)
+    #poj_trsc = database(username, passwd)
     
     if request.method == 'DELETE':
-        sts, log = poj_trsc.destroy_project(project)
+        sts, log = app_info.destroy_project(username, passwd, project)
         return Response({'Delete': sts, 'log':log})
 
     elif request.method == 'GET':
-        services = poj_trsc.service_list(project)
+        services = app_info.service_list(username, passwd, project)
         ret_data = {}
         ret_data['success'] = 'true'
         ret_data['total'] = len(services)
@@ -76,6 +78,7 @@ def project(request, project, format=None):
         return Response(ret_data)
 
 
+'''
 @api_view(['GET'])
 @authentication_classes((TokenAuthentication,))
 @permission_classes((IsAuthenticated,))
@@ -93,6 +96,7 @@ def shellbox(request, format=None):
         addr = shell_trsc.get_shellinabox(project, service)
 
         return Response({"address":addr})
+'''
 
 
 @api_view(['GET'])
@@ -104,14 +108,14 @@ def service_list(request, format=None):
     '''
     ret_data = {}
     username,passwd = str(request.user), str(request.user)
-    srv_t = database(username, passwd)
+    #srv_t = database(username, passwd)
 
     try:
         project_name = request.GET['project']
     except:
         return Response({},status=status.HTTP_400_BAD_REQUEST)
 
-    services = srv_t.service_list(project_name)
+    services = app_info.service_list(username, passwd, project_name)
 
     ret_data['success'] = 'true'
     ret_data['total'] = len(services)
@@ -128,7 +132,7 @@ def log(request, format=None):
     '''
     ret_data = {}
     username,passwd = str(request.user), str(request.user)
-    log_tsc = database(username, passwd)
+    #log_tsc = database(username, passwd)
 
     try:
         project_name = request.GET['project']
@@ -137,7 +141,7 @@ def log(request, format=None):
         print "here"
         return Response({}, status = status.HTTP_400_BAD_REQUEST)
     
-    log = log_tsc.get_logs(project_name, service_name)
+    log = app_info.get_logs(username, passwd, project_name, service_name)
     ret_data['success'] = 'true'
     ret_data['logs'] = log
     
