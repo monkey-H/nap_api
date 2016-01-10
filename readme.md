@@ -8,6 +8,13 @@
 > sudo pip install djangorestframework     
 > sudo pip install fs     
 
+## 安装部署方法
+测试阶段使用django自带的http server，运行方式是进入项目根目录，即manager.py所在目录，运行一下命令:
+```
+$ python manage.py runserver 0.0.0.0:8000
+```
+同样，django项目也可以使用apache服务器,只需要进行简单的设置即可，详见django官方文档[How to use Django with Apache and mod_wsgi](https://docs.djangoproject.com/en/1.8/howto/deployment/wsgi/modwsgi/)
+
 ## app_api: 应用的状态信息
 该部分是对运行在NAP平台上的应用进行管理的接口，包括应用和服务的创建、应用状态的获取以及应用的开启和暂停等。
 
