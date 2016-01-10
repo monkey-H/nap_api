@@ -9,7 +9,7 @@
 > sudo pip install fs     
 
 ## 安装部署方法
-测试阶段使用django自带的http server，运行方式是进入项目根目录，即manager.py所在目录，运行一下命令:
+测试阶段使用django自带的http server，运行方式是进入项目根目录，即manage.py所在目录，运行一下命令:
 ```
 $ python manage.py runserver 0.0.0.0:8000
 ```
