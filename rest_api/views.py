@@ -5,6 +5,8 @@ from rest_framework.reverse import reverse
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import authenticate
+import ast
+
 from rest_framework.decorators import (
         api_view, 
         authentication_classes, 
@@ -73,10 +75,10 @@ def project_list(request, format=None):
         elif cmd == 'paras':
             try:
                 argv = request.POST['paras']
-                path = request.POST['path']
             except:
                 return Response({}, status=status.HTTP_400_BAD_REQUEST)
-            sts, msg = project_create.replace_argv(username, passwd, path, projname, argv)
+            argv_dict = ast.literal_eval(argv)
+            sts, msg = project_create.replace_argv(username, passwd, projname, argv_dict)
             return Response({'log': msg})
 
 
@@ -84,11 +86,14 @@ def project_list(request, format=None):
 @authentication_classes((TokenAuthentication,))
 @permission_classes((IsAuthenticated,))
 def project(request, project, format=None):
-    username,passwd = str(request.user), str(request.user)
+    """
+    delete a project, or get services from a project
+    """
+    username, passwd = str(request.user), str(request.user)
 
     if request.method == 'DELETE':
-        sts, log = app_info.destroy_project(username, passwd, project)
-        return Response({'Delete': sts, 'log':log})
+        sts, logs = app_info.destroy_project(username, passwd, project)
+        return Response({'Delete': sts, 'log': logs})
 
     elif request.method == 'GET':
         services = app_info.service_list(username, passwd, project)
@@ -99,42 +104,20 @@ def project(request, project, format=None):
         return Response(ret_data)
 
 
-'''
-@api_view(['GET'])
-@authentication_classes((TokenAuthentication,))
-@permission_classes((IsAuthenticated,))
-def shellbox(request, format=None):
-    username,passwd = str(request.user), str(request.user)
-    shell_trsc = database(username, passwd)
-
-    if request.method == 'GET':
-        try:
-            project = request.GET['project']
-            service = request.GET['service']
-        except:
-            return Response({}, status=status.HTTP_400_BAD_REQUEST)
-        
-        addr = shell_trsc.get_shellinabox(project, service)
-
-        return Response({"address":addr})
-'''
-
-
 @api_view(['GET'])
 @authentication_classes((TokenAuthentication,))
 @permission_classes((IsAuthenticated,))
 def service_list(request, format=None):
-    '''
+    """
     list services of a project
-    '''
+    """
     ret_data = {}
     username,passwd = str(request.user), str(request.user)
-    #srv_t = database(username, passwd)
 
     try:
         project_name = request.GET['project']
     except:
-        return Response({},status=status.HTTP_400_BAD_REQUEST)
+        return Response({}, status=status.HTTP_400_BAD_REQUEST)
 
     services = app_info.service_list(username, passwd, project_name)
 
@@ -148,12 +131,11 @@ def service_list(request, format=None):
 @authentication_classes((TokenAuthentication,))
 @permission_classes((IsAuthenticated,))
 def log(request, format=None):
-    '''
+    """
     get logs of a specific service
-    '''
+    """
     ret_data = {}
     username,passwd = str(request.user), str(request.user)
-    #log_tsc = database(username, passwd)
 
     try:
         project_name = request.GET['project']
@@ -162,9 +144,9 @@ def log(request, format=None):
         print "here"
         return Response({}, status = status.HTTP_400_BAD_REQUEST)
     
-    log = app_info.get_logs(username, passwd, project_name, service_name)
+    logs = app_info.get_logs(username, passwd, project_name, service_name)
     ret_data['success'] = 'true'
-    ret_data['logs'] = log
+    ret_data['logs'] = logs
     
     return Response(ret_data)
 
