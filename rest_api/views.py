@@ -42,16 +42,42 @@ def project_list(request, format=None):
         return Response(ret_data)
 
     elif request.method == 'POST':
-        ret_data = {}
         try:
             projname = request.POST['projname']
-            projurl = request.POST['projurl']
+            cmd = request.POST['cmd']
         except:
             return Response({}, status=status.HTTP_400_BAD_REQUEST)
 
-        sts, log = project_create.create_project_from_url(username, passwd, projname, projurl)
+        # create project from github url
+        if cmd == 'url':
+            try:
+                projurl = request.POST['projurl']
+            except:
+                return Response({}, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response({'log':log})
+            sts, msg = project_create.create_project_from_url(username, passwd, projname, projurl)
+            if sts == 'Argv':
+                return Response({'paras': 'true', 'argv': msg})
+            else:
+                return Response({'paras': 'false', 'log': msg})
+
+        # create proejct from filebrowser
+        elif cmd == 'file':
+            sts, msg = project_create.create_project_from_file(username, passwd, projname)
+            if sts == 'Argv':
+                return Response({'paras': 'true', 'argv': msg})
+            else:
+                return Response({'paras': 'false', 'log': msg})
+
+        # create from given params and filepath
+        elif cmd == 'paras':
+            try:
+                argv = request.POST['paras']
+                path = request.POST['path']
+            except:
+                return Response({}, status=status.HTTP_400_BAD_REQUEST)
+            sts, msg = project_create.replace_argv(username, passwd, path, projname, argv)
+            return Response({'log': msg})
 
 
 @api_view(['DELETE', 'GET'])
@@ -59,8 +85,7 @@ def project_list(request, format=None):
 @permission_classes((IsAuthenticated,))
 def project(request, project, format=None):
     username,passwd = str(request.user), str(request.user)
-    #poj_trsc = database(username, passwd)
-    
+
     if request.method == 'DELETE':
         sts, log = app_info.destroy_project(username, passwd, project)
         return Response({'Delete': sts, 'log':log})
