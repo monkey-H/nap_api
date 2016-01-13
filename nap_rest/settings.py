@@ -44,7 +44,6 @@ INSTALLED_APPS = (
     'corsheaders',
     'rest_framework.authtoken',
     'rest_api',
-    'filebrowser',
     'filebrowser_rest',
 )
 

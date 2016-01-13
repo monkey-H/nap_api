@@ -13,7 +13,6 @@ class Service(models.Model):
     name = models.CharField(max_length=100)
     origin_url = models.CharField(max_length=200)
     instance_num = models.PositiveSmallIntegerField(default=0)
-    owner = models.ForeignKey('auth.User', related_name='services')
 
     class Meta:
         ordering = ('created',)

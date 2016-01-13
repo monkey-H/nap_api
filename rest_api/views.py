@@ -11,35 +11,31 @@ from rest_framework.decorators import (
         permission_classes
 )
 
-from rest_api.models import Service,App
-#from compose.database import database
-#from compose.restful import create_project
-from compose import app_info, project_create
+# from compose import app_info, project_create
+from orchestration.nap_api import app_info, project_create
 
 
 @api_view(['GET', 'POST'])
 @authentication_classes((TokenAuthentication,))
 @permission_classes((IsAuthenticated,))
 def project_list(request, format=None):
-    '''
+    """
     list all servie or create a service
-    '''
+    """
     username,passwd = str(request.user), str(request.user)
-    #poj_trsc = database(username, passwd)
 
     if request.method == 'GET':
         ret_data = {}
-        #get paras from get request
+        # get paras from get request
         try:
             begin_index = int(request.GET['start'])
             length = int(request.GET['limit'])
         except:
             return Response({},status=status.HTTP_400_BAD_REQUEST)
 
-        #poj_list = poj_trsc.project_list(begin_index, length)
         poj_list = app_info.project_list(username, passwd, begin_index, length)
 
-        #get all service name
+        # get all service name
         ret_data['success'] = "true"
         ret_data['total'] = len(poj_list)
         ret_data['items'] = poj_list
@@ -51,7 +47,7 @@ def project_list(request, format=None):
             projname = request.POST['projname']
             projurl = request.POST['projurl']
         except:
-            return Response({},status=status.HTTP_400_BAD_REQUEST)
+            return Response({}, status=status.HTTP_400_BAD_REQUEST)
 
         sts, log = project_create.create_project_from_url(username, passwd, projname, projurl)
 
