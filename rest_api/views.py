@@ -2,8 +2,8 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
+# from rest_framework.authentication import TokenAuthentication
+# from rest_framework.permissions import IsAuthenticated
 import ast
 
 from rest_framework.decorators import (
@@ -13,12 +13,13 @@ from rest_framework.decorators import (
 )
 
 # from compose import app_info, project_create
-from orchestration.nap_api import app_info, project_create
+from orchestration.nap_api import app_info
+from orchestration.nap_api import project_create
 
 
 @api_view(['GET', 'POST'])
-@authentication_classes((TokenAuthentication,))
-@permission_classes((IsAuthenticated,))
+# @authentication_classes((TokenAuthentication,))
+# @permission_classes((IsAuthenticated,))
 def project_list(request, format=None):
     """
     list all servie or create a service
@@ -82,8 +83,8 @@ def project_list(request, format=None):
 
 
 @api_view(['DELETE', 'GET'])
-@authentication_classes((TokenAuthentication,))
-@permission_classes((IsAuthenticated,))
+# @authentication_classes((TokenAuthentication,))
+# @permission_classes((IsAuthenticated,))
 def project(request, pro, format=None):
     """
     delete a project, or get services from a project
@@ -101,8 +102,8 @@ def project(request, pro, format=None):
 
 
 @api_view(['GET'])
-@authentication_classes((TokenAuthentication,))
-@permission_classes((IsAuthenticated,))
+# @authentication_classes((TokenAuthentication,))
+# @permission_classes((IsAuthenticated,))
 def service_list(request, format=None):
     """
     list services of a project
@@ -124,8 +125,8 @@ def service_list(request, format=None):
 
 
 @api_view(['GET'])
-@authentication_classes((TokenAuthentication,))
-@permission_classes((IsAuthenticated,))
+# @authentication_classes((TokenAuthentication,))
+# @permission_classes((IsAuthenticated,))
 def log(request, format=None):
     """
     get logs of a specific service

@@ -17,7 +17,6 @@ from django_auth_ldap.config import LDAPSearch
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
@@ -28,7 +27,6 @@ SECRET_KEY = '#a8=7hneq2u=0&u)^r%%)3!wkp16gz@fu%_^sjpj$vbs&vc)!w'
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -79,7 +77,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'nap_rest.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
@@ -89,7 +86,6 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
@@ -104,27 +100,24 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
 
-
 CORS_ORIGIN_ALLOW_ALL = True
-
 
 # configuration for rest-framework
 REST_FRAMEWORK = {
-        'DEFAULT_AUTHENTICATION_CLASSES': (
-            'rest_framework.authentication.TokenAuthentication',
-        )
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    )
 }
 
-#ldap configuration 
+# ldap configuration
 AUTHENTICATION_BACKENDS = (
-     'django_auth_ldap.backend.LDAPBackend',
-     'django.contrib.auth.backends.ModelBackend',
+    'django_auth_ldap.backend.LDAPBackend',
+    'django.contrib.auth.backends.ModelBackend',
 )
 
 AUTH_LDAP_SERVER_URI = 'ldap://172.17.0.2'
@@ -133,6 +126,6 @@ AUTH_LDAP_BIND_PASSWORD = "cshuo"
 AUTH_LDAP_USER_SEARCH = LDAPSearch("ou=people,dc=nap,dc=com", ldap.SCOPE_SUBTREE, "(uid=%(user)s)")
 
 AUTH_LDAP_USER_ATTR_MAP = {
-     "first_name": "givenName",
-     "last_name": "sn",
+    "first_name": "givenName",
+    "last_name": "sn",
 }

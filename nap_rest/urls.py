@@ -20,7 +20,7 @@ from rest_framework.authtoken.views import obtain_auth_token
 urlpatterns = [
     url(r'^app/', include('rest_api.urls')),
     url(r'^fss/', include('filebrowser_rest.urls')),
-	url(r'^grappelli/', include('grappelli.urls')),
-	url(r'^admin/', include(admin.site.urls)),
+    url(r'^grappelli/', include('grappelli.urls')),
+    url(r'^admin/', include(admin.site.urls)),
     url(r'^auth$', obtain_auth_token),
 ]
