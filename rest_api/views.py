@@ -16,6 +16,7 @@ from rest_framework.decorators import (
 from orchestration.nap_api import app_info
 from orchestration.nap_api import project_create
 
+username = 'test'
 
 @api_view(['GET', 'POST'])
 # @authentication_classes((TokenAuthentication,))
@@ -24,7 +25,7 @@ def project_list(request, format=None):
     """
     list all servie or create a service
     """
-    username = str(request.user)
+    # username = str(request.user)
 
     if request.method == 'GET':
         ret_data = {}
@@ -89,7 +90,7 @@ def project(request, pro, format=None):
     """
     delete a project, or get services from a project
     """
-    username = str(request.user)
+    # username = str(request.user)
 
     if request.method == 'DELETE':
         sts, logs = app_info.destroy_project(username, pro)
@@ -109,12 +110,14 @@ def service_list(request, format=None):
     list services of a project
     """
     ret_data = {}
-    username = str(request.user)
+    # username = str(request.user)
 
     try:
         project_name = request.GET['project']
     except:
         return Response({}, status=status.HTTP_400_BAD_REQUEST)
+
+    print project_name
 
     services = app_info.service_list(username, project_name)
 
@@ -132,7 +135,7 @@ def log(request, format=None):
     get logs of a specific service
     """
     ret_data = {}
-    username = str(request.user)
+    # username = str(request.user)
 
     try:
         project_name = request.GET['project']
