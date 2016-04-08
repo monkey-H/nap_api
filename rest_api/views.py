@@ -44,6 +44,21 @@ def project_list(request, format=None):
         ret_data['items'] = poj_list
         return Response(ret_data)
 
+    elif request.method == 'PUT':
+        try:
+            cmd = request.POST['cmd']
+            project_name = request.POST['project_name']
+        except:
+            return Response({}, status=status.HTTP_400_BAD_REQUEST)
+
+        # kill project
+        if cmd == 'kill':
+            sts, msg = app_info.kill_project(username, project_name)
+            return Response({'success': sts, 'log': msg})
+        elif cmd == 'restart':
+            sts, msg = app_info.restart_project(username, project_name)
+            return Response({'success': sts, 'log': msg})
+
     elif request.method == 'POST':
         try:
             projname = request.POST['projname']
