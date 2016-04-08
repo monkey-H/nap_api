@@ -97,10 +97,26 @@ def project(request, pro, format=None):
         return Response({'Delete': sts, 'log': logs})
 
     elif request.method == 'GET':
-        services = app_info.service_list(username, pro)
-        ret_data = {'success': 'true', 'total': len(services), 'services': services}
+        item = app_info.get_project(username, pro)
+        ret_data = {'success': 'true', 'total': 1, 'item': item}
         return Response(ret_data)
 
+
+@api_view(['GET'])
+def service(request, format=None):
+    """
+    get a service
+    """
+
+    # username = str(request.user)
+
+    project_name = request.GET['project']
+    service_name = request.GET['service']
+
+    if request.method == 'GET':
+        item = app_info.get_service(username, project_name, service_name)
+        ret_data = {'success': 'true', 'total': 1, 'item': item}
+        return Response(ret_data)
 
 @api_view(['GET'])
 # @authentication_classes((TokenAuthentication,))

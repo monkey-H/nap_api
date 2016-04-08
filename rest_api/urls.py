@@ -6,7 +6,8 @@ urlpatterns = [
     url(r'^$', views.api_root),
     url(r'^services$', views.service_list, name='services'),
     url(r'^projects$', views.project_list, name='projects'),
-    url(r'^projects/(?P<project>\S+)$', views.project, name='project'),
+    url(r'^projects/(?P<pro>\S+)$', views.project, name='project'),
+    url(r'^service', views.service, name='service'),
     url(r'^log$', views.log, name='logs'),
 ]
 
