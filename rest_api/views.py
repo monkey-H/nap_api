@@ -18,7 +18,7 @@ from orchestration.nap_api import project_create
 
 username = 'test'
 
-@api_view(['GET', 'POST'])
+@api_view(['GET', 'POST', 'PUT'])
 # @authentication_classes((TokenAuthentication,))
 # @permission_classes((IsAuthenticated,))
 def project_list(request, format=None):
@@ -46,22 +46,27 @@ def project_list(request, format=None):
 
     elif request.method == 'PUT':
         try:
-            cmd = request.POST['cmd']
-            project_name = request.POST['project_name']
+            cmd = request.data['cmd']
+            project_name = request.data['project_name']
         except:
             return Response({}, status=status.HTTP_400_BAD_REQUEST)
 
         # kill project
         if cmd == 'kill':
-            sts, msg = app_info.kill_project(username, project_name)
-            return Response({'success': sts, 'log': msg})
+            # sts, msg = app_info.kill_project(username, project_name)
+            # return Response({'success': sts, 'log': msg})
+            app_info.kill_project(username, project_name)
+            return Response({'success': 'success', 'log': 'log'})
         elif cmd == 'restart':
-            sts, msg = app_info.restart_project(username, project_name)
-            return Response({'success': sts, 'log': msg})
+            print username, project_name
+            # sts, msg = app_info.restart_project(username, project_name)
+            # return Response({'success': sts, 'log': msg})
+            app_info.restart_project(username, project_name)
+            return Response({'success': 'success', 'log': 'log'})
 
     elif request.method == 'POST':
         try:
-            projname = request.POST['projname']
+            project_name = request.POST['project_name']
             cmd = request.POST['cmd']
         except:
             return Response({}, status=status.HTTP_400_BAD_REQUEST)
@@ -69,11 +74,11 @@ def project_list(request, format=None):
         # create project from github url
         if cmd == 'url':
             try:
-                projurl = request.POST['projurl']
+                project_url = request.POST['url']
             except:
                 return Response({}, status=status.HTTP_400_BAD_REQUEST)
 
-            sts, msg = project_create.create_project_from_url(username, projname, projurl)
+            sts, msg = project_create.create_project_from_url(username, project_name, project_url)
             if sts == 'Argv':
                 return Response({'paras': 'true', 'argv': msg})
             else:
@@ -81,7 +86,7 @@ def project_list(request, format=None):
 
         # create proejct from filebrowser
         elif cmd == 'file':
-            sts, msg = project_create.create_project_from_file(username, projname)
+            sts, msg = project_create.create_project_from_file(username, project_name)
             if sts == 'Argv':
                 return Response({'paras': 'true', 'argv': msg})
             else:
@@ -94,7 +99,7 @@ def project_list(request, format=None):
             except:
                 return Response({}, status=status.HTTP_400_BAD_REQUEST)
             argv_dict = ast.literal_eval(argv)
-            sts, msg = project_create.replace_argv(username, projname, argv_dict)
+            sts, msg = project_create.replace_argv(username, project_name, argv_dict)
             return Response({'log': msg})
 
 
@@ -168,11 +173,11 @@ def log(request, format=None):
     ret_data = {}
     # username = str(request.user)
 
+    print 'log before'
     try:
-        project_name = request.GET['project']
-        service_name = request.GET['service']
+        project_name = request.GET['project_name']
+        service_name = request.GET['service_name']
     except:
-        print "here"
         return Response({}, status=status.HTTP_400_BAD_REQUEST)
 
     logs = app_info.get_logs(username, project_name, service_name)
