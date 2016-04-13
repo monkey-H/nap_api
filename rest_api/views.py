@@ -208,7 +208,7 @@ def monitor(request, format=None):
     if cmd == 'machine':
         dic = app_info.machine_monitor()
 
-        return Response(dic)
+        return Response({'dic': dic})
 
     elif cmd == 'container':
         project_name = request.GET['project_name']
