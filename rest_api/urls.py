@@ -9,6 +9,7 @@ urlpatterns = [
     url(r'^projects/(?P<pro>\S+)$', views.project, name='project'),
     url(r'^service', views.service, name='service'),
     url(r'^log$', views.log, name='logs'),
+    url(r'^monitor$', views.monitor, name='monitor'),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

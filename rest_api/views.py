@@ -193,3 +193,29 @@ def api_root(request, format=None):
         'services': reverse('project', request=request, format=None),
         'projects': reverse('projects', request=request, format=None)
     })
+
+
+@api_view(['GET'])
+def monitor(request, format=None):
+    """
+    get monitor info about machine or container
+    """
+    try:
+        cmd = request.GET['cmd']
+    except:
+        return Response({}, status=status.HTTP_400_BAD_REQUEST)
+
+    if cmd == 'machine':
+        dic = app_info.machine_monitor()
+
+        return Response(dic)
+
+    elif cmd == 'container':
+        project_name = request.GET['project_name']
+        service_name = request.GET['service_name']
+        print "here"
+        dic = app_info.container_monitor(username, project_name, service_name)
+
+        ret_data = {'success': 'true', 'dic': dic}
+
+        return Response(ret_data)
