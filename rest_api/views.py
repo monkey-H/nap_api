@@ -206,16 +206,62 @@ def monitor(request, format=None):
         return Response({}, status=status.HTTP_400_BAD_REQUEST)
 
     if cmd == 'machine':
-        dic = app_info.machine_monitor()
+        array = app_info.machine_monitor()
 
-        return Response({'dic': dic})
+        return Response({'list': array})
 
     elif cmd == 'container':
         project_name = request.GET['project_name']
         service_name = request.GET['service_name']
-        print "here"
-        dic = app_info.container_monitor(username, project_name, service_name)
+        array = app_info.container_monitor(username, project_name, service_name)
 
-        ret_data = {'success': 'true', 'dic': dic}
+        ret_data = {'success': 'true', 'list': array}
 
         return Response(ret_data)
+
+
+@api_view(('GET', 'DELETE', 'PUT'))
+def network(request, format=None):
+    """
+    get network for user
+    """
+
+    if request.method == 'GET':
+        try:
+            #username = request.GET('username')
+            kind = request.GET['kind']
+        except:
+            return Response({}, status=status.HTTP_400_BAD_REQUEST)
+
+        if kind == 'all':
+            array = app_info.get_networks(username)
+
+            return Response({'success': 'true', 'list': array})
+
+        elif kind == 'one':
+            network_name = request.GET['network']
+            di = app_info.get_network(username, network_name)
+
+            return Response(di)
+
+    if request.method == 'DELETE':
+        try:
+            network_name = request.GET['network']
+        except:
+            return Response({}, status=status.HTTP_400_BAD_REQUEST)
+
+        app_info.delete_network(username, network_name)
+
+        return Response({}, {'success': 'true'})
+
+    if request.method == 'PUT':
+        try:
+            network_name = request.GET['network']
+        except:
+            return Response({}, status=status.HTTP_400_BAD_REQUEST)
+
+        stat, logs = app_info.create_network(username, network_name)
+
+        di = {'success': stat, 'log': logs}
+
+        return Response({}, di)
