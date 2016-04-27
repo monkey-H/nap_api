@@ -66,15 +66,15 @@ def project_list(request, format=None):
 
     elif request.method == 'POST':
         try:
-            project_name = request.POST['project_name']
-            cmd = request.POST['cmd']
+            project_name = request.data['project_name']
+            cmd = request.data['cmd']
         except:
             return Response({}, status=status.HTTP_400_BAD_REQUEST)
 
         # create project from github url
         if cmd == 'url':
             try:
-                project_url = request.POST['url']
+                project_url = request.data['url']
             except:
                 return Response({}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -95,12 +95,23 @@ def project_list(request, format=None):
         # create from given params and filepath
         elif cmd == 'paras':
             try:
-                argv = request.POST['paras']
+                argv = request.data['paras']
             except:
                 return Response({}, status=status.HTTP_400_BAD_REQUEST)
             argv_dict = ast.literal_eval(argv)
             sts, msg = project_create.replace_argv(username, project_name, argv_dict)
             return Response({'log': msg})
+
+        # create from table
+        elif cmd == 'table':
+            try:
+                table = request.data['table']
+            except:
+                return Response({}, status=status.HTTP_400_BAD_REQUEST)
+
+            sts, msg = project_create.create_project_from_table(username, project_name, table)
+
+            return Response({'status': sts, 'log': msg})
 
 
 @api_view(['DELETE', 'GET'])
