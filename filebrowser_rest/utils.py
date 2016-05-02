@@ -7,17 +7,17 @@ from rest_framework import status
 from rest_framework.response import Response
 
 
-def download( py_fs, path, attachment = False ):
+def download(py_fs, path, attachment=False):
     '''
     下载或查看文件
     '''
     if py_fs.isdir(path):
-	return Response({}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({}, status=status.HTTP_400_BAD_REQUEST)
 
     if not py_fs.exists(path):
-	return Response({}, status=status.HTTP_404_NOT_FOUND)
+        return Response({}, status=status.HTTP_404_NOT_FOUND)
 
-    file = py_fs.open(path,'rb')
+    file = py_fs.open(path, 'rb')
     import mimetypes
     inFileName = path.split('/')[-1]
     mt = mimetypes.guess_type(inFileName)
@@ -28,31 +28,31 @@ def download( py_fs, path, attachment = False ):
     return response
 
 
-def dirToJson(inFs, path = '/', recursive = False):
+def dirToJson(inFs, path='/', recursive=False):
     '''
     将一个指定文件夹目录树返回,json格式数据
     '''
     data = []
     if not inFs.exists(path) or not inFs.isdir(path):
         return data
-    for item in inFs.listdir(path = path ):
-        fPath =  os.path.join(path, item )
-        infos = inFs.getinfo( fPath )
-        isLeaf = not inFs.isdir( fPath )
-        iconCls = not isLeaf and 'icon-folder' or 'icon-file-%s' % item[item.rfind('.')+1:]
+    for item in inFs.listdir(path=path):
+        fPath = os.path.join(path, item)
+        infos = inFs.getinfo(fPath)
+        isLeaf = not inFs.isdir(fPath)
+        iconCls = not isLeaf and 'icon-folder' or 'icon-file-%s' % item[item.rfind('.') + 1:]
         row = {
-            'text':item
-            ,'size':infos.get('size', 0)
-            ,'modified_time':infos.get('modified_time', datetime.datetime.now()).isoformat()
-            ,'created_time':infos.get('created_time', datetime.datetime.now()).isoformat()
-            ,'leaf':isLeaf
-            ,'filetype':iconCls
-            ,'items':[]
-            ,'path': 'localfolder/' + fPath
+            'text': item
+            , 'size': infos.get('size', 0)
+            , 'modified_time': infos.get('modified_time', datetime.datetime.now()).isoformat()
+            , 'created_time': infos.get('created_time', datetime.datetime.now()).isoformat()
+            , 'leaf': isLeaf
+            , 'filetype': iconCls
+            , 'items': []
+            , 'path': 'localfolder/' + fPath
         }
         # recursive and isdir ?
         if not isLeaf and recursive:
-            row['items'] = dirToJson(inFs, path = fPath, recursive = recursive )
+            row['items'] = dirToJson(inFs, path=fPath, recursive=recursive)
 
         data.append(row)
     return data
@@ -75,9 +75,8 @@ def splitPath(inPath):
 def getFsFromKey(key, username):
     if key in sources.keys():
         source = sources[key]
-	root_path = source['params']['root_path'] + username
+        root_path = source['params']['root_path'] + username
         cur_fs = source['cls'](root_path)
         return cur_fs
     else:
         return None
-

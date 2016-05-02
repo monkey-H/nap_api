@@ -8,11 +8,11 @@
 from fs.osfs import OSFS
 
 sources = {
-    'localfolder':{
-        'cls':OSFS
-        ,'params':{
-            'root_path':r'/home/monkey/Documents/filebrowser/'
-            #,'encoding':
+    'localfolder': {
+        'cls': OSFS
+        , 'params': {
+            'root_path': r'/home/monkey/Documents/filebrowser/'
+            # ,'encoding':
         }
     }
 }

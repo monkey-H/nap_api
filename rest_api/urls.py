@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'^log$', views.log, name='logs'),
     url(r'^monitor$', views.monitor, name='monitor'),
     url(r'^network$', views.network, name='network'),
+    url(r'^yaml$', views.yaml, name='yaml'),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

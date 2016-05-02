@@ -106,6 +106,7 @@ def project_list(request, format=None):
         elif cmd == 'table':
             try:
                 table = request.data['table']
+                print table
             except:
                 return Response({}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -276,3 +277,20 @@ def network(request, format=None):
         di = {'success': stat, 'log': logs}
 
         return Response({}, di)
+
+
+@api_view(['GET'])
+def yaml(request, format=None):
+    """
+    get yaml from project
+    """
+
+    if request.method == 'GET':
+        try:
+            project_name = request.GET['project_name']
+        except:
+            return Response({}, status=status.HTTP_400_BAD_REQUEST)
+
+        yy = app_info.get_yaml(username, project_name)
+
+        return Response({'yaml': yy})
