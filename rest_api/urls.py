@@ -12,6 +12,7 @@ urlpatterns = [
     url(r'^monitor$', views.monitor, name='monitor'),
     url(r'^network$', views.network, name='network'),
     url(r'^yaml$', views.yaml, name='yaml'),
+    url(r'^images$', views.images, name='images'),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

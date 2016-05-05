@@ -25,7 +25,6 @@ def project_list(request, format=None):
     list all servie or create a service
     """
     username = str(request.user)
-    print username
 
     if request.method == 'GET':
         ret_data = {}
@@ -253,7 +252,6 @@ def network(request, format=None):
 
     if request.method == 'GET':
         try:
-            #username = request.GET('username')
             kind = request.GET['kind']
         except:
             return Response({}, status=status.HTTP_400_BAD_REQUEST)
@@ -311,3 +309,19 @@ def yaml(request, format=None):
         yy = app_info.get_yaml(username, project_name)
 
         return Response({'yaml': yy})
+
+
+@api_view(['GET'])
+@authentication_classes((TokenAuthentication,))
+@permission_classes((IsAuthenticated,))
+def images(request, format=None):
+    """
+    get images list for user
+    """
+
+    username = str(request.user)
+
+    if request.method == 'GET':
+        ii = app_info.get_images(username)
+
+        return Response({'list': ii})
