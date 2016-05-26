@@ -151,6 +151,27 @@ def service(request, format=None):
         ret_data = {'success': 'true', 'total': 1, 'item': item}
         return Response(ret_data)
 
+
+@api_view(['GET'])
+@authentication_classes((TokenAuthentication,))
+@permission_classes((IsAuthenticated,))
+def container(request, format=None):
+    """
+    get a service
+    """
+    username = str(request.user)
+
+    project_name = request.GET['project_name']
+    service_name = request.GET['service_name']
+    container_name = request.GET['container_name']
+
+    if request.method == 'GET':
+        item = app_info.get_container(username, project_name, service_name, container_name)
+        ret_data = {'success': 'true', 'total': 1, 'item': item}
+
+        return Response(ret_data)
+
+
 @api_view(['GET'])
 @authentication_classes((TokenAuthentication,))
 @permission_classes((IsAuthenticated,))
@@ -179,6 +200,30 @@ def service_list(request, format=None):
 @api_view(['GET'])
 @authentication_classes((TokenAuthentication,))
 @permission_classes((IsAuthenticated,))
+def container_list(request, format=None):
+    """
+    list services of a project
+    """
+    username = str(request.user)
+
+    try:
+        project_name = request.GET['project_name']
+        service_name = request.GET['service_name']
+    except:
+        return Response({}, status=status.HTTP_400_BAD_REQUEST)
+
+    containers = app_info.container_list(username, project_name, service_name)
+
+    ret_data = {'success': 'true',
+                'total': len(containers),
+                'item': containers}
+
+    return Response(ret_data)
+
+
+@api_view(['GET'])
+@authentication_classes((TokenAuthentication,))
+@permission_classes((IsAuthenticated,))
 def log(request, format=None):
     """
     get logs of a specific service
@@ -186,14 +231,14 @@ def log(request, format=None):
     ret_data = {}
     username = str(request.user)
 
-    print 'log before'
     try:
         project_name = request.GET['project_name']
         service_name = request.GET['service_name']
+        container_name = request.GET['container_name']
     except:
         return Response({}, status=status.HTTP_400_BAD_REQUEST)
 
-    logs = app_info.get_logs(username, project_name, service_name)
+    logs = app_info.get_logs(username, project_name, service_name, container_name)
     ret_data['success'] = 'true'
     ret_data['logs'] = logs
 
@@ -233,7 +278,9 @@ def monitor(request, format=None):
     elif cmd == 'container':
         project_name = request.GET['project_name']
         service_name = request.GET['service_name']
-        array = app_info.container_monitor(username, project_name, service_name)
+        container_name = request.GET['container_name']
+        print project_name, service_name, container_name
+        array = app_info.container_monitor(username, project_name, service_name, container_name)
 
         ret_data = {'success': 'true', 'list': array}
 
