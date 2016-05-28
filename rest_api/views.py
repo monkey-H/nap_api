@@ -279,10 +279,28 @@ def monitor(request, format=None):
         project_name = request.GET['project_name']
         service_name = request.GET['service_name']
         container_name = request.GET['container_name']
-        print project_name, service_name, container_name
         array = app_info.container_monitor(username, project_name, service_name, container_name)
 
         ret_data = {'success': 'true', 'list': array}
+
+        return Response(ret_data)
+
+    elif cmd == 'service':
+        project_name = request.GET['project_name']
+        service_name = request.GET['service_name']
+
+        rel = app_info.service_monitor(username, project_name, service_name)
+
+        ret_data = {'success': 'true', 'item': rel}
+
+        return Response(ret_data)
+
+    elif cmd == 'project':
+        project_name = request.GET['project_name']
+
+        rel = app_info.project_monitor(username, project_name)
+
+        ret_data = {'success': 'true', 'item': rel}
 
         return Response(ret_data)
 
